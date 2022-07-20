@@ -46,7 +46,8 @@ def crawl_detail(url, start_time):
     if not html:
         return {}
     post = parse_detail(html)
+    post['url'] = url
     if notify.meet_condition(post, start_time):
-        msg = f'**标题**：[{post["title"]}]({post["url"]})\n**租金**：{post["rent"]}\n**发布时间**：{post["create_time"]}\n**作者**：[{post["author"]["name"]}]({post["author"]["url"]})\n**内容**：{post["content"]}'
+        msg = f'**标题**：[{post["title"]}]({url})\n**租金**：{post["rent"]}\n**发布时间**：{post["create_time"]}\n**作者**：[{post["author"]["name"]}]({post["author"]["url"]})\n**内容**：{post["content"]}'
         notify.send_msg(msg)
     return post

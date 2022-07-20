@@ -41,16 +41,16 @@ def parse_detail(html):
     解析帖子详情
     """
     soup = BeautifulSoup(html, "html.parser")
+    title = soup.h1.get_text(strip=True)
+    content = soup.find("div", class_='topic-richtext').get_text("\n", True)
     author = soup.select_one('#topic-content h3 a')
-    json_data = soup.find("script", type='application/ld+json').get_text(strip=True).replace("\r\n", "\\n")
-    data = json.loads(json_data)
-    rent = extract_rent(data['name'] + "\n" + data['text'])
+    create_time = soup.select_one('#topic-content h3 span.create-time').get_text()
+    rent = extract_rent(title + "\n" + content)
     return {
-        "title": data['name'],
+        "title": title,
         "rent": rent,
-        "url": data['url'],
-        "create_time": datetime.strptime(data['dateCreated'], '%Y-%m-%dT%H:%M:%S'),
-        "content": data['text'],
+        "create_time": datetime.strptime(create_time, '%Y-%m-%d %H:%M:%S'),
+        "content": content,
         "author": {
             "name": author.get_text(),
             "url": author['href']
