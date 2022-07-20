@@ -1,3 +1,4 @@
+import json
 import logging
 import re
 from datetime import datetime
@@ -24,7 +25,7 @@ def parse_list(html):
         author = row.select_one('td:nth-child(2) a')
         posts.append({
             "title": link['title'],
-            "url": link['href'] + '?_dtcc=1',
+            "url": link['href'],
             "reply_count": int(r_count) if r_count else 0,
             "time": datetime.strptime(time_text, '%Y-%m-%d %H:%M'),
             "author": {
@@ -40,19 +41,16 @@ def parse_detail(html):
     解析帖子详情
     """
     soup = BeautifulSoup(html, "html.parser")
-    title = soup.h1.get_text(strip=True)
-    content = soup.find("div", class_='topic-richtext').get_text("\n", True)
     author = soup.select_one('#topic-content h3 a')
-    create_time = soup.select_one('#topic-content h3 span.create-time').get_text()
-    action = soup.select_one("div.action-collect a")
-    rent = extract_rent(title + "\n" + content)
+    json_data = soup.find("script", type='application/ld+json').get_text(strip=True).replace("\r\n", "\\n")
+    data = json.loads(json_data)
+    rent = extract_rent(data['name'] + "\n" + data['text'])
     return {
-        "id": action['data-id'],
-        "title": title,
+        "title": data['name'],
         "rent": rent,
-        "url": action['data-url'] + '?_dtcc=1',
-        "create_time": datetime.strptime(create_time, '%Y-%m-%d %H:%M:%S'),
-        "content": content,
+        "url": data['url'],
+        "create_time": datetime.strptime(data['dateCreated'], '%Y-%m-%dT%H:%M:%S'),
+        "content": data['text'],
         "author": {
             "name": author.get_text(),
             "url": author['href']
@@ -70,7 +68,7 @@ def extract_rent(text):
         # 过滤干扰项
         if re.match(r"押金|补贴", match.group(1)):
             continue
-        if re.match(r"米|年|起", match.group(3)):
+        if re.match(r"米|年", match.group(3)):
             continue
         return int(match.group(2))
     logging.warning("租金提取失败\n%s", text)

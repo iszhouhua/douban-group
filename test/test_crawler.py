@@ -13,7 +13,7 @@ class TestCrawler(unittest.TestCase):
 
     def test_crawl_detail(self):
         start_time = datetime.datetime.combine(datetime.date(2022, 7, 14), datetime.time.min)
-        detail = crawl_detail("https://www.douban.com/group/topic/271067873/?_dtcc=1", start_time)
+        detail = crawl_detail("https://www.douban.com/group/topic/271153816/", start_time)
         print(detail)
 
 
