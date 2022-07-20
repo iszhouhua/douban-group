@@ -18,7 +18,8 @@ HEADERS = {
 }
 
 # 监控的起始时间(仅在此时间之后发布的帖子才进行监控),默认为今天
-START_TIME = datetime.datetime.combine(datetime.date.today(), datetime.time.min)
+START_TIME = datetime.datetime.combine(
+    datetime.date.today(), datetime.time.min)
 
 # 需要监控的豆瓣小组集合
 GROUP_LIST = [
@@ -46,8 +47,8 @@ RENT_RANGE = ()
 # 仅推送1-2k的帖子
 # RENT_RANGE = (1000, 2000)
 
-# 接口请求间隔(秒),默认5-15秒随机
-REQUEST_INTERVAL = (5, 15)
+# 接口请求间隔(秒),默认10-20秒随机
+REQUEST_INTERVAL = (10, 20)
 
 # 监控周期(秒),两次循环中间的间隔时长,默认1小时
 WATCH_INTERVAL = 3600

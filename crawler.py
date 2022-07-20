@@ -1,20 +1,31 @@
+import logging
 import random
+import sys
 import time
 
 import requests
 
 import notify
-from config import HEADERS, REQUEST_INTERVAL
+from config import GROUP_LIST, HEADERS, REQUEST_INTERVAL
 from parse import parse_list, parse_detail
 
 
 def __get(url):
     response = requests.get(url, headers=HEADERS)
+    html = response.text
     if response.ok:
-        return response.text
+        return html
     if response.status_code == 404:
+        logging.warning(f'{url}不存在')
         return None
-    raise RuntimeError(f'请求[{url}]失败,状态码:{response.status_code},内容:{response.text}')
+    if '你没有权限访问这个页面' in html:
+        logging.warning(f'{url}无权访问')
+        return None
+    logging.error('request %s is error.\nstatus_code:%s,text:%s',
+                  url, response.status_code, html)
+    notify.send_msg(f'请求[{url}]({url})失败,状态码:{response.status_code},请修复后继续.')
+    logging.info(GROUP_LIST)
+    sys.exit()
 
 
 def crawl_list(group_id, start_time, start=None):
