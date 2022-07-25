@@ -22,7 +22,7 @@ def crawl(group):
             time.sleep(random.randint(REQUEST_INTERVAL[0], REQUEST_INTERVAL[1]))
             detail = crawl_detail(post['url'], start_time)
             logging.info(detail)
-            if detail["create_time"] > max_time:
+            if "create_time" in detail and detail["create_time"] > max_time:
                 max_time = detail["create_time"]
         group["start_time"] = max_time
         logging.info('[%s]小组的新帖子抓取完成,最新一篇帖子发布时间为[%s]', group['name'], max_time)
