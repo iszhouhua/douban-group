@@ -23,9 +23,9 @@
 git clone https://github.com/iszhouhua/douban-group.git
 cd douban-group
 # 创建 venv
-python -m venv venv
+python -m venv .venv
 # 激活
-source ./venv/bin/activate
+source ./.venv/bin/activate
 # 安装依赖
 pip install -r requirements.txt
 # 修改配置 -> config.py, 然后运行 main.py
